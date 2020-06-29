@@ -1,31 +1,12 @@
 //MODULE IMPORTS
 const express = require('express')
-const jwt = require('jsonwebtoken');
 
-//MODULE IMPORTS
+//MODEL IMPORTS
 const { Ticket } = require('../models/ticket')
 const { Passenger, validatePassenger } = require('../models/passenger')
 
-const auth =  function (req, res, next){
-    const token = req.header('x-auth-token');
-    if(!token){
-        return res.status(401).send('Access Denied. No token provided');
-    }
-    try{
-      const decoded = jwt.verify(token, "jwtPrivateKey");
-      req.user = decoded;
-      next();
-    }
-    catch(err){
-       return res.status(403).send("Access denied. Try the token again");
-    }
-}
-
-const adminCheck = function (req, res, next) {
-    if (!req.user.isAdmin) 
-        return res.status(403).send('Access denied.');
-    next();
-}
+//ROUTER OBJECT INIT
+const router = express.Router();
 
 router.post('/create', async (req, res) => {
     try {
@@ -142,22 +123,5 @@ router.put('/:ticketId', async (req, res) => {
         return res.status(400).send("Already updated with the same details");
     }
 });
-
-router.post('/reset', [auth, adminCheck], async (req, res) => {
-    try {
-        await Ticket.update({}, {
-            $set: {
-                isBooked: false
-            }
-        }, {
-            multi: true
-        });
-        return res.status(200).json({
-            message: "updation successful"
-        });
-    } catch (err) {
-        return res.status(404).send("reset request cannot be proceed right now. Try again later");
-    }
-})
 
 module.exports = router;

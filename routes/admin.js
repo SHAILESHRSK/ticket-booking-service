@@ -2,9 +2,11 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const {auth, adminCheck} = require('../utils')
 
 //MODEL IMPORTS
 const { Admin } = require('../models/admin');
+const { Ticket } = require('../models/ticket')
 
 //ROUTER OBJECT INIT
 const router = express.Router();
@@ -77,5 +79,21 @@ router.post('/signup', async (req, res) => {
         console.log("ERROR:: ", err);
     }
 });
+
+//ADMIN RESET ALL {POST}
+//Send the JWT received as 'x-auth-token' header to work
+router.post('/reset', [auth, adminCheck], async (req, res) => {
+    try {
+        //Update multiple items using the blank filter (which satisfies everything)
+        await Ticket.updateMany({}, {
+            $set: {
+                isBooked: false
+            }
+        });
+        return res.status(200).send("Successfully Reset all seats!");
+    } catch (err) {
+        console.log("ERROR:: ", err)
+    }
+})
 
 module.exports = router;
