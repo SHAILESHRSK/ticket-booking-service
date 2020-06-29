@@ -37,7 +37,7 @@ router.post('/login', async (req, res) => {
         //Send the token in the response header
         return res.header('x-auth-header', token)
             .status(200)
-            .send("Login Successful!");
+            .json({"message":"Login Successful!"});
     } catch (err) {
         console.log("ERROR:: ", err);
     }

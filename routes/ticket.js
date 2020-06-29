@@ -85,6 +85,11 @@ router.get('/:ticketId', async (req, res) => {
                 isBooked: ticketData.isBooked
             });
         }
+        else{
+            return res.status(404).json({
+                "message": "Ticket ID is incorrect!"
+            })
+        }
     } catch (err) {
         console.log("ERROR:: ", err)
         return res.status(403).send("Unknown Error!");
@@ -101,6 +106,11 @@ router.put('/:ticketId', async (req, res) => {
             $set: { isBooked: req.body.isBooked }},
             {new: true}
         );
+        if(!ticketData){
+            return res.status(404).json({
+                "message": "Ticket ID is incorrect!"
+            })
+        }
         //Get PassengerID from ticket and update passenger details
         const passengerId = ticketData.passengerObj
         await Passenger.findByIdAndUpdate(passengerId, 
