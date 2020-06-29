@@ -14,7 +14,7 @@ router.get('/:ticketId', async (req, res) => {
         //Check if ticketId was passed correctly
         const { ticketId } = req.params;
         if (!ticketId) {
-            return res.status(400).send("ticketId is missing");
+            return res.status(400).send("TicketID input is missing!");
         }
 
         //Get ticket from ticketId in Atlas Cluster

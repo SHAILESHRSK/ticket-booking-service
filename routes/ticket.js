@@ -1,8 +1,8 @@
+//MODULE IMPORTS
 const express = require('express')
-const router = express.Router()
-
 const jwt = require('jsonwebtoken');
 
+//MODULE IMPORTS
 const { Ticket } = require('../models/ticket')
 const { Passenger, validatePassenger } = require('../models/passenger')
 
