@@ -3,6 +3,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
+//MODEL IMPORTS
 const { Admin } = require('../models/admin');
 
 //ROUTER OBJECT INIT
@@ -36,7 +37,7 @@ router.post('/login', async (req, res) => {
             .status(200)
             .send("Login Successful!");
     } catch (err) {
-        console.log(err);
+        console.log("ERROR:: ", err);
     }
 });
 
@@ -73,7 +74,7 @@ router.post('/signup', async (req, res) => {
             token
         });
     } catch (err) {
-        return res.send(err)
+        console.log("ERROR:: ", err);
     }
 });
 
