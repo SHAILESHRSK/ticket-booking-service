@@ -27,5 +27,4 @@ const passengerSchema = new mongoose.Schema({
 
 module.exports = {
     Passenger: mongoose.model('passenger', passengerSchema),
-    validatePassenger: validatePassenger,
 }
