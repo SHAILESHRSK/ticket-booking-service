@@ -3,7 +3,7 @@ const express = require('express')
 
 //MODEL IMPORTS
 const { Ticket } = require('../models/ticket')
-const { Passenger } = require('../models/passenger')
+const { Passenger } = require('../models/passenger');
 
 //ROUTER OBJECT INIT
 const router = express.Router();
@@ -15,7 +15,7 @@ router.post('/create', async (req, res) => {
         if (parseInt(req.body.seatID) > 40) {
             return res.status(400).send("Invalid SeatID. There are only 40 seats in the Bus!");
         }
-        
+
         //Check if seat is already booked.
         let exists = await Ticket.findOne({
             isBooked: true,
@@ -24,7 +24,6 @@ router.post('/create', async (req, res) => {
         if (exists) {
             return res.status(400).send("The seat you are looking for is already booked");
         }
-
         //Save Passenger to Atlas Cluster
         const passenger = new Passenger(req.body.passenger);
         const passengerData = await passenger.save();
@@ -73,13 +72,17 @@ router.get('/viewClosed', async (req, res) => {
     }
 })
 
+//VIEW TICKET STATUS {GET}
 router.get('/:ticketId', async (req, res) => {
     try {
+        //Get the ticketId from parameters
         const { ticketId } = req.params;
+        //Find the ticket using ticketId in the Atlas Cluster
         const ticketData = await Ticket.findById(ticketId);
+        //Return status of the booked ticket if found
         if (ticketData) {
             return res.status(200).json({
-                status: ticketData.isBooked
+                isBooked: ticketData.isBooked
             });
         }
     } catch (err) {
@@ -88,42 +91,24 @@ router.get('/:ticketId', async (req, res) => {
     }
 })
 
+//UPDATE TICKET STATUS {PUT}
 router.put('/:ticketId', async (req, res) => {
     try {
-        const ticketId = req.params.ticketId || null;
-        const requestData = req.body;
-        let passenger = requestData.passenger || null;
-
-        if (requestData.isBooked == true) {
-            let ticketData = await Ticket.findById(ticketId);
-            if (ticketData) {
-                const passengerId = ticketData.passengerObj;
-                const deleteData = await Passenger.remove({
-                    _id: passengerId
-                });
-                if (deleteData) {
-                    ticketData.isBooked = requestData.isBooked;
-                    const result = await ticketData.save();
-                    return res.status(200).json(result);
-                }
-            }
-        }
-        if (requestData.isBooked == false && passenger != null) {
-            let ticketData = await Ticket.findById(ticketId);
-            if (!ticketData) {
-                return res.status(404).json({
-                    message: "Not found"
-                });
-            }
-            const passengerData = new Passenger(passenger);
-            const passengerSaved = await passengerData.save();
-            if (passengerSaved) {
-                ticketData.passenger = passengerSaved._id;
-                ticketData.is_booked = requestData.isBooked;
-                const ticketSaved = await ticketData.save();
-                return res.status(200).send(ticketSaved);
-            }
-        }
+        //Get the ticketId from parameters
+        const { ticketId } = req.params;
+        console.log(ticketId)
+        //Find the ticket using ticketId in the Atlas Cluster and update it's status
+        const ticketData = await Ticket.findByIdAndUpdate(ticketId, {
+            $set: { isBooked: req.body.isBooked }},
+            {new: true}
+        );
+        //Get PassengerID from ticket and update passenger details
+        const passengerId = ticketData.passengerObj
+        await Passenger.findByIdAndUpdate(passengerId, 
+            { $set: req.body.passenger }, 
+            { new: true }, 
+        );
+        res.send("Successfully Updated Details!")
     } catch (err) {
         console.log("ERROR:: ", err)
         return res.status(403).send("Unknown Error!");
