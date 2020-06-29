@@ -1,12 +1,12 @@
+//MODULE IMPORTS
 const express = require('express');
 const mongoose = require('mongoose');
+require('dotenv/config')
+
+//ROUTE IMPORTS
 const admin = require('./routes/admin');
 const ticket = require('./routes/ticket');
 const passenger = require('./routes/passenger');
-
-require('dotenv/config')
-
-const app = express();
 
 (async function connectDB() {
     try {
@@ -21,20 +21,12 @@ const app = express();
     }
 })();
 
+const app = express();
 app.use(express.json());
-app.use('/api/ticket', ticket);
+app.use('/api/admin', admin);
 app.use('/api/passenger', passenger);
-app.use('/admin', admin);
+app.use('/api/ticket', ticket);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Started the Development Server on Port: ${PORT}`);
+app.listen(process.env.PORT, () => {
+    console.log("Starting the development Server on Port:", process.env.PORT);
 });
-
-/*LATER*/
-// app.use(express.static('public'));
-
-// // http://expressjs.com/en/starter/basic-routing.html
-// app.get("/", function (req, res) {
-//   res.sendFile(__dirname + '/views/index.html');
-// });

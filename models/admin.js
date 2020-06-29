@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const val = require('@hapi/joi');
+const val = require('joi');
 
 const adminSchema = new mongoose.Schema({
     email : {

@@ -21,23 +21,19 @@ const auth =  function (req, res, next){
     }
 }
 
-const adminCheck = function (req, res, next) { 
-    // 401 Unauthorized
-    // 403 Forbidden 
-
+const adminCheck = function (req, res, next) {
     if (!req.user.isAdmin) 
         return res.status(403).send('Access denied.');
-
     next();
 }
-  
-//create ticket and user api
+
 router.post('/create', async (req, res) => {
     try {
         const { error } = validatePassenger(req.body.passenger);
         if (error || parseInt(req.body.seatID) > 40) {
             return res.status(400).send("Invalid input");
         }
+
         let exists = await Ticket.findOne({
             isBooked: true,
             seatID: req.body.seatID
@@ -48,6 +44,7 @@ router.post('/create', async (req, res) => {
 
         const ticket = new Ticket()
 
+        console.log(req.body.passenger)
         const passenger = new Passenger(req.body.passenger);
         const passengerData = await passenger.save();
         if (passengerData) {
@@ -63,7 +60,6 @@ router.post('/create', async (req, res) => {
     }
 });
 
-//all tickets with isBooked false
 router.get('/viewOpen', async (req, res) => {
     try {
         const data = await Ticket.find({
@@ -77,7 +73,6 @@ router.get('/viewOpen', async (req, res) => {
     }
 })
 
-//all tickets with isBooked true
 router.get('/viewClosed', async (req, res) => {
     try {
         const data = await Ticket.find({
@@ -91,7 +86,6 @@ router.get('/viewClosed', async (req, res) => {
     }
 })
 
-//view ticket status based on ticket_id
 router.get('/:ticketId', async (req, res) => {
     try {
         const { ticketId } = req.params;
@@ -108,7 +102,6 @@ router.get('/:ticketId', async (req, res) => {
     }
 })
 
-//update ticket status and user details
 router.put('/:ticketId', async (req, res) => {
     try {
         const ticketId = req.params.ticketId || null;
@@ -150,12 +143,11 @@ router.put('/:ticketId', async (req, res) => {
     }
 });
 
-//reset ticket data as an Admin
 router.post('/reset', [auth, adminCheck], async (req, res) => {
     try {
-        const updateToDo = await Ticket.update({}, {
+        await Ticket.update({}, {
             $set: {
-                is_booked: false
+                isBooked: false
             }
         }, {
             multi: true

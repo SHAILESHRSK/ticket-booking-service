@@ -7,7 +7,7 @@ const ticketSchema = mongoose.Schema({
     },
     seatID: { 
         type: Number, 
-        min: 1, 
+        min: 1,
         max: 40, 
         required: true 
     },

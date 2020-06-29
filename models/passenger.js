@@ -1,33 +1,29 @@
 const mongoose = require('mongoose');
-const val = require('@hapi/joi');
 
 const passengerSchema = new mongoose.Schema({
     email : {
         type : String,
         required : true,
+        minlength: 5,
+        maxlength: 35,
     },
     name : {
         type : String, 
-        required : true
+        required : true,
+        minlength: 5,
+        maxlength: 35,
     },
     sex : {
         type : String,
-        required : true
+        required : true,
+        maxlength: 1
     },
     age : {
-        type : String, 
-        required : true
+        type : Number, 
+        required : true,
+        min: 18
     },
 });
-
-function validatePassenger(passenger){
-    return val.validate(passenger, {
-        email: val.string().min(5).max(35).required().email(),
-        name: val.string().trim().min(5).max(50).required(),
-        sex: val.string().trim().max(1).required(),
-        age: val.number().min(18).required(),
-    });
-}
 
 module.exports = {
     Passenger: mongoose.model('passenger', passengerSchema),
