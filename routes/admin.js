@@ -90,7 +90,9 @@ router.post('/reset', [auth, adminCheck], async (req, res) => {
                 isBooked: false
             }
         });
-        return res.status(200).send("Successfully Reset all seats!");
+        return res.status(200).json({
+            "message":"Successfully Reset all seats!"
+        });
     } catch (err) {
         console.log("ERROR:: ", err)
     }

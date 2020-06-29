@@ -96,7 +96,6 @@ router.put('/:ticketId', async (req, res) => {
     try {
         //Get the ticketId from parameters
         const { ticketId } = req.params;
-        console.log(ticketId)
         //Find the ticket using ticketId in the Atlas Cluster and update it's status
         const ticketData = await Ticket.findByIdAndUpdate(ticketId, {
             $set: { isBooked: req.body.isBooked }},
@@ -108,7 +107,9 @@ router.put('/:ticketId', async (req, res) => {
             { $set: req.body.passenger }, 
             { new: true }, 
         );
-        res.send("Successfully Updated Details!")
+        res.json({
+            "message":"Successfully Updated Details!"
+        })
     } catch (err) {
         console.log("ERROR:: ", err)
         return res.status(403).send("Unknown Error!");
