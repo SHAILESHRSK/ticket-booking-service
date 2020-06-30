@@ -13,6 +13,9 @@
  - Additional API for admin to reset the server (opens up all the tickets)
 
 # Postman Collection && API Documentation:
+The API can be developed locally as well as on this [Heroku Dyno](https://ticket-booking-service-api.herokuapp.com/)
+
+The detailed usage and Postman collection is available on:
 
 https://documenter.getpostman.com/view/5400857/T17CDA89?version=latest
 
@@ -26,3 +29,4 @@ https://documenter.getpostman.com/view/5400857/T17CDA89?version=latest
 - `express` is used as the application framework
 - The database is MongoDB atlas server, with the credentials provided (since it's a private repo and also free tier)
 - `mongoose` is used for database connections and schemas
+- The API is also deployed on a Heroku Dyno (there were some issues with AWS Payment Authentication on my end)
